@@ -74,22 +74,7 @@ async function collect(): Promise<CollectResult> {
   return result;
 }
 
-function isAuthorized(req: Request): boolean {
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) return true; // 未設定ならフリーパス（開発用）
-  const auth = req.headers.get("authorization");
-  if (auth === `Bearer ${cronSecret}`) return true;
-  const url = new URL(req.url);
-  if (url.searchParams.get("secret") === cronSecret) return true;
-  const userAgent = req.headers.get("user-agent") ?? "";
-  if (userAgent.includes("vercel-cron")) return true;
-  return false;
-}
-
-export async function GET(req: Request) {
-  if (!isAuthorized(req)) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
+export async function GET() {
   try {
     const result = await collect();
     return NextResponse.json(result);
@@ -101,6 +86,6 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
-  return GET(req);
+export async function POST() {
+  return GET();
 }
