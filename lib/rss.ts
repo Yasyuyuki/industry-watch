@@ -38,7 +38,12 @@ function truncate(s: string, max = 240): string {
   return s.slice(0, max - 1) + "…";
 }
 
-export async function fetchAndParseRss(url: string): Promise<ParsedItem[]> {
+export const MAX_ITEMS_PER_SOURCE = 30;
+
+export async function fetchAndParseRss(
+  url: string,
+  limit: number = MAX_ITEMS_PER_SOURCE
+): Promise<ParsedItem[]> {
   const res = await fetch(url, {
     headers: {
       "User-Agent":
@@ -55,7 +60,7 @@ export async function fetchAndParseRss(url: string): Promise<ParsedItem[]> {
   const rssItems = data?.rss?.channel?.item;
   if (rssItems) {
     const arr = Array.isArray(rssItems) ? rssItems : [rssItems];
-    return arr.map((it): ParsedItem => {
+    return arr.slice(0, limit).map((it): ParsedItem => {
       const title = stripHtml(textOf(it.title));
       const url = textOf(it.link) || textOf(it.guid);
       const desc = textOf(it.description) || textOf(it["content:encoded"]);
@@ -72,7 +77,7 @@ export async function fetchAndParseRss(url: string): Promise<ParsedItem[]> {
   const atomEntries = data?.feed?.entry;
   if (atomEntries) {
     const arr = Array.isArray(atomEntries) ? atomEntries : [atomEntries];
-    return arr.map((entry): ParsedItem => {
+    return arr.slice(0, limit).map((entry): ParsedItem => {
       const title = stripHtml(textOf(entry.title));
       const linkNode = entry.link;
       let url = "";
