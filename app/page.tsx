@@ -44,14 +44,18 @@ export default async function Home() {
     data = await getData();
   } catch (e) {
     return (
-      <main className="container max-w-5xl py-10">
-        <h1 className="text-3xl font-bold tracking-tight">Industry Watch</h1>
-        <div className="mt-6 rounded-lg border border-destructive/50 bg-destructive/5 p-6 text-sm">
-          <p className="font-semibold text-destructive">セットアップが必要です</p>
-          <p className="mt-2 text-muted-foreground">
-            Supabase環境変数が未設定、またはテーブル未作成のようです。README の手順をご確認ください。
+      <main className="mx-auto max-w-3xl px-4 py-16">
+        <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          Industry Watch
+        </div>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+          セットアップが必要です
+        </h1>
+        <div className="mt-8 rounded-lg border border-destructive/40 bg-destructive/5 p-6 text-sm">
+          <p className="text-muted-foreground">
+            Supabase環境変数が未設定、またはテーブル未作成のようです。READMEの手順をご確認ください。
           </p>
-          <p className="mt-3 font-mono text-xs text-muted-foreground">
+          <p className="mt-3 font-mono text-xs text-destructive/80">
             {e instanceof Error ? e.message : String(e)}
           </p>
         </div>
@@ -60,7 +64,7 @@ export default async function Home() {
   }
 
   return (
-    <main className="container max-w-5xl py-6 md:py-10">
+    <main className="mx-auto max-w-3xl px-4 py-10 md:py-16">
       <Dashboard
         industries={data.industries}
         sources={data.sources}
