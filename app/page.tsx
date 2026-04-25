@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase";
 import { Dashboard } from "@/components/dashboard";
-import type { Industry, Item, Source } from "@/lib/types";
+import type { DailySummary, Industry, Item, Source } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -31,10 +31,21 @@ async function getData() {
 
   if (itmErr) throw new Error(itmErr.message);
 
+  let summaries: DailySummary[] = [];
+  const { data: sumData } = await supabase
+    .from("daily_summaries")
+    .select("*")
+    .order("date", { ascending: false })
+    .limit(50);
+  if (sumData) {
+    summaries = sumData as DailySummary[];
+  }
+
   return {
     industries: (industries ?? []) as Industry[],
     sources: (sources ?? []) as Source[],
     items: (items ?? []) as Item[],
+    summaries,
   };
 }
 
@@ -69,6 +80,7 @@ export default async function Home() {
         industries={data.industries}
         sources={data.sources}
         items={data.items}
+        summaries={data.summaries}
       />
     </main>
   );

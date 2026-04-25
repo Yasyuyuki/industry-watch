@@ -53,7 +53,20 @@ cross join (values
 where i.slug = 'live-streaming'
   and not exists (select 1 from sources s2 where s2.industry_id = i.id and s2.url = s.url);
 
+create table if not exists daily_summaries (
+  id uuid primary key default uuid_generate_v4(),
+  industry_id uuid not null references industries(id) on delete cascade,
+  date date not null,
+  summary text not null,
+  notable_item_ids uuid[] not null default '{}',
+  generated_at timestamptz not null default now(),
+  unique (industry_id, date)
+);
+create index if not exists daily_summaries_industry_date_idx
+  on daily_summaries(industry_id, date desc);
+
 -- RLS は今回は使わない（service_role key 経由でのみアクセス）
-alter table industries disable row level security;
-alter table sources    disable row level security;
-alter table items      disable row level security;
+alter table industries      disable row level security;
+alter table sources         disable row level security;
+alter table items           disable row level security;
+alter table daily_summaries disable row level security;

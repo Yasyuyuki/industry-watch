@@ -31,3 +31,12 @@ export type IndustryWithItems = Industry & {
   items: Item[];
   sources: Source[];
 };
+
+export type DailySummary = {
+  id: string;
+  industry_id: string;
+  date: string;
+  summary: string;
+  notable_item_ids: string[];
+  generated_at: string;
+};
